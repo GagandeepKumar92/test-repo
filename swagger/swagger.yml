@@ -1,0 +1,159 @@
+consumes:
+- application/json
+definitions:
+  update_user:
+    type: object
+    required:
+      - address
+    properties:
+      id:
+        type: string
+      name:
+        type: string
+      address:
+        type: string
+        description: Address
+        example: ABC
+      created_at:
+        title: Created At
+        description: Timestamp when the user was created
+        type: string
+        format: date-time
+        readOnly: true    
+  user:
+    type: object
+    required:
+      - name
+    properties:
+      id:
+        type: string
+      name:
+        type: string
+      # minLength: 3
+      address:
+        type: string
+        description: Address
+        example: ABC
+      created_at:
+        title: Created At
+        description: Timestamp when the user was created
+        type: string
+        format: date-time
+        readOnly: true    
+  error:
+    type: object
+    required:
+      - message
+    properties:
+      code:
+        type: integer
+        format: int64
+      message:
+        type: string
+  
+info:
+  title: Gagan User Example1
+  version: 0.1.0
+paths:
+  /users:
+    get:
+      tags:
+        - users
+      operationId: find_Users
+      parameters:
+        - name: name
+          in: query
+          type: string
+        - name: limit
+          in: query
+          type: integer
+          default: 0
+      responses:
+        200:
+          description: list the User operations
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/user"
+        default:
+          description: generic error response
+          schema:
+            $ref: "#/definitions/error"
+    post:
+      tags:
+        - users
+      operationId: add_User
+      parameters:
+       - name: body
+         in: body
+         required: true
+         schema:
+          $ref: "#/definitions/user"
+      responses:
+        201:
+          description: Created
+          schema:
+            $ref: "#/definitions/user"
+        400:
+          description: Name should be at least 3 characters long
+          schema:
+            $ref: "#/definitions/error"
+        default:
+          description: error
+          schema:
+            $ref: "#/definitions/error"
+  /users/{id}:
+    parameters:
+      - type: string
+        name: id
+        in: path
+        required: true
+    delete:
+      tags: 
+        - users
+      operationId: delete_user
+      responses:
+        204:
+          description: Deleted
+        404:
+          description: User Not Found
+          schema:
+            $ref: "#/definitions/error" 
+        default:
+          description: error
+          schema:
+            $ref: "#/definitions/error" 
+  #/user/{id}:
+  #  parameters:
+  #    - type: string
+  #      name: id
+  #      in: path
+  #      required: true
+    patch:
+      tags: 
+        - users
+      operationId: update_user
+      parameters:
+       - name: body
+         in: body
+         required: true
+         schema:
+          $ref: "#/definitions/update_user"
+      responses:
+        204:
+          description: Updated
+          schema:
+            $ref: "#/definitions/update_user"
+        404:
+          description: User Not Found
+          schema:
+            $ref: "#/definitions/error" 
+        default:
+          description: error
+          schema:
+            $ref: "#/definitions/error"        
+produces:
+- application/json
+schemes:
+- http
+swagger: "2.0"
